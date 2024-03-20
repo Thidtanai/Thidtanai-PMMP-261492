@@ -1,0 +1,23 @@
+/* media query for screens smaller than 768px wide */
+@media only screen and (max-width: 768px) {
+    .flex {
+      flex-direction: column;  /* Adjust the layout for smaller screens */
+      align-items: center;     /* Center the items vertically */
+    }
+  
+
+    .flex-icon-small-screen{
+        margin-top: 1rem;
+        flex-direction: row;
+    }
+    .bold-text-small-screen{
+      font-size: 1.5rem;
+    }
+
+  }
+@media only screen and (max-width: 340) {
+  .site-email {
+    font-size: 0.5rem;
+  }
+}
+  

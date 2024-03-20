@@ -1,0 +1,5 @@
+ลง Middleware
+- npm install morgan body-parser cors
+- npm install bcrypt
+- npm install connect-flash
+- npm install express-session
