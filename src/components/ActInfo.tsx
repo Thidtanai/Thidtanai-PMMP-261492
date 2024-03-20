@@ -50,38 +50,53 @@ const ActivityInfo: React.FC<ActivityDetailProps> = ({
   onJoin,
   onClose,
 }) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(true);
   const [recruitNum, setRecruitNum] = useState<number>();
   const navigate = useNavigate();
   const handleJoinRecruit = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleJoinActivity = async()=>{
-    try{
+  const handleJoinActivity = async () => {
+    try {
       const actRes = await axios.post(
         `http://localhost:4000/activity/activities/${activity_id}/add-member`,
         {
-          membered_user: user_id
+          membered_user: user_id,
         }
       );
-      console.log(actRes)
+      console.log(actRes);
       const userRes = await axios.post(
         `http://localhost:4000/user/users/${user_id}/add-activity`,
         {
-          activity_id: activity_id
+          activity_id: activity_id,
         }
       );
-      console.log(userRes)
+      console.log(userRes);
       window.location.reload();
       navigate("/activity");
-    } catch(error){
-      alert("สมัครไปแล้ว")
+    } catch (error) {
+      alert("สมัครไปแล้ว");
       window.location.reload();
-      navigate("/activity")
+      navigate("/activity");
       console.log(error);
     }
-  }
+  };
+
+  useEffect(() => {
+    console.log("wah", isOpen)
+    const disableScroll = () => {
+      document.body.style.overflow = "hidden";
+    };
+    if (isOpen) {
+      disableScroll();
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isOpen]);
 
   return (
     <div
