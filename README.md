@@ -33,3 +33,5 @@ export default {
 ## For run backend server
 - `cd backend`
 - `npm run server`
+
+## Note: This git repository has cloned from https://github.com/Dexshine/PMMP-261492
