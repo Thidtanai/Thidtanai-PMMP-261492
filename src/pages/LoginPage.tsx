@@ -55,8 +55,7 @@ const LoginPage: React.FC = () => {
             console.log("user", getUser.data);
             if (getUser) {
               const userTag = getUser.data.user_tag;
-              if (userTag.length < 3) {
-                console.log("wah");
+              if (userTag.length >= 3) {
                 navigate("/activity");
               }
               else {
