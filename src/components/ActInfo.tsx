@@ -50,7 +50,8 @@ const ActivityInfo: React.FC<ActivityDetailProps> = ({
   onJoin,
   onClose,
 }) => {
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const isInfoOpen = true;
   const [recruitNum, setRecruitNum] = useState<number>();
   const navigate = useNavigate();
   const handleJoinRecruit = () => {
@@ -84,11 +85,10 @@ const ActivityInfo: React.FC<ActivityDetailProps> = ({
   };
 
   useEffect(() => {
-    console.log("wah", isOpen)
     const disableScroll = () => {
       document.body.style.overflow = "hidden";
     };
-    if (isOpen) {
+    if (isInfoOpen) {
       disableScroll();
     } else {
       document.body.style.overflow = "auto";
@@ -96,7 +96,7 @@ const ActivityInfo: React.FC<ActivityDetailProps> = ({
     return () => {
       document.body.style.overflow = "auto";
     };
-  }, [isOpen]);
+  }, [isInfoOpen]);
 
   return (
     <div
