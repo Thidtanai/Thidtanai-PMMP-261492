@@ -31,6 +31,7 @@ interface ActivityRecruit {
     ];
 }
 const TagOptions = [
+    { value: "วิชาการ", label: "วิชาการ" },
     { value: "วิชาชีพ", label: "วิชาชีพ" },
     { value: "กิจการนักศึกษา", label: "กิจการนักศึกษา" },
     { value: "เพิ่มทักษะ", label: "เพิ่มทักษะ" },
