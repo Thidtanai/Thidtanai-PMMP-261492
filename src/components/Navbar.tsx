@@ -25,6 +25,20 @@ interface NotiForm {
   }
 }
 
+interface UserForm {
+  _id: string,
+  user_email: string,
+  user_description: {
+    first_name: string,
+    last_name: string,
+    department: string,
+    gender: string
+  }
+  user_image: string,
+  user_tag: [string]
+}
+
+
 const NavBar: FunctionComponent<{ headerText: string }> = ({
   headerText,
 }) => {
@@ -52,6 +66,7 @@ const NavBar: FunctionComponent<{ headerText: string }> = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [haveToken, setHaveToken] = useState<MyToken>();
   const [notifications, setNotifications] = useState<NotiForm[]>([]); // Initialize as an empty array
+  const [userData, setUserData] = useState<UserForm | undefined>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,6 +81,10 @@ const NavBar: FunctionComponent<{ headerText: string }> = ({
             console.log(decodedTk);
             setHaveToken(decodedTk);
             setIsLogin(true);
+            const getUser = await axios.get(
+              `http://localhost:4000/user/${decodedTk.id}`
+            );
+            setUserData(getUser.data);
           }
         }
 
@@ -127,7 +146,7 @@ const NavBar: FunctionComponent<{ headerText: string }> = ({
                   </b>
                 )}
               </nav>
-              <div>{isLoggedin ? <LogoutBtn /> : <LoginBtn />}</div>
+              <div>{isLoggedin ? <LogoutBtn user_email={userData?.user_email} user_image={userData?.user_image} first_name={userData?.user_description.first_name} last_name={userData?.user_description.last_name} /> : <LoginBtn />}</div>
             </div>
           </div>
         </div>
