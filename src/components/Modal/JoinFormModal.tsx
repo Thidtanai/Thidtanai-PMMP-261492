@@ -253,7 +253,7 @@ const JoinFormModal: FunctionComponent<JoinReqModalProps> = ({
                         onChange={handleInputChange}
                         aria-describedby="helper-text-explanation"
                         className="bg-gray-50 border border-gray-300 text-cmu-purple text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-52 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="example@gmail.com"
+                        placeholder="Email,Line id,FB,... "
                       />
                     </div>
                     <div className="pt-4 md:p-5 flex flex-row justify-end">
