@@ -20,7 +20,7 @@ router.get('/logout', userController.logoutUser);
 router.get('/', userController.getAllUser);
 
 // Update user
-router.put('/update/:id', userController.updateUser);
+router.post('/update/:id', userController.updateUser);
 
 // Post add activity to user
 router.post('/users/:id/add-activity', userController.addActivityToUser);

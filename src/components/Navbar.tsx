@@ -146,7 +146,7 @@ const NavBar: FunctionComponent<{ headerText: string }> = ({
                   </b>
                 )}
               </nav>
-              <div>{isLoggedin ? <LogoutBtn user_email={userData?.user_email} user_image={userData?.user_image} first_name={userData?.user_description.first_name} last_name={userData?.user_description.last_name} /> : <LoginBtn />}</div>
+              <div>{isLoggedin ? <LogoutBtn _id={userData?._id} user_email={userData?.user_email} user_image={userData?.user_image} first_name={userData?.user_description.first_name} last_name={userData?.user_description.last_name} /> : <LoginBtn />}</div>
             </div>
           </div>
         </div>

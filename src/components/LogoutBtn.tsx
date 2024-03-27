@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   FunctionComponent,
   useEffect,
@@ -39,6 +40,7 @@ const LogoutBtn: FunctionComponent<LogoutBtnType> = ({
   user_email,
   first_name,
   last_name,
+  _id,
 }) => {
   const frameDivStyle: CSSProperties = useMemo(() => {
     return {
@@ -56,6 +58,7 @@ const LogoutBtn: FunctionComponent<LogoutBtnType> = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [uploadImage, setUploadImage] = useState<string>();
 
   const bStyle: CSSProperties = useMemo(() => {
     return {
@@ -70,6 +73,27 @@ const LogoutBtn: FunctionComponent<LogoutBtnType> = ({
     localStorage.removeItem("token");
     navigate("/");
     window.location.reload();
+  };
+
+  const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const files = e.target.files;
+      if (!files || files.length === 0) {
+        return;
+      }
+      const file = files[0];
+      const base64_file = await convertToBase64(file);
+      const uploadImg = await axios.post(
+        `http://localhost:4000/user/update/${_id}`,
+        {
+          user_image: base64_file,
+        }
+      );
+      console.log(uploadImage)
+      window.location.reload();
+    } catch (error) {
+      console.log("Error upload image: ", error);
+    }
   };
 
   useEffect(() => {
@@ -144,7 +168,16 @@ const LogoutBtn: FunctionComponent<LogoutBtnType> = ({
           >
             <li>
               <div className="hover:cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                อัพโหลดรูป
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleUploadImage}
+                  className="hidden"
+                  id="fileInput"
+                />
+                <label htmlFor="fileInput" className="hover:cursor-pointer">
+                  เปลี่ยนรูปโปรไฟล์
+                </label>
               </div>
             </li>
           </ul>
@@ -163,3 +196,20 @@ const LogoutBtn: FunctionComponent<LogoutBtnType> = ({
 };
 
 export default LogoutBtn;
+
+function convertToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(file);
+    fileReader.onload = () => {
+      if (typeof fileReader.result === "string") {
+        resolve(fileReader.result);
+      } else {
+        reject(new Error("Failed to read file"));
+      }
+    };
+    fileReader.onerror = (error) => {
+      reject(error);
+    };
+  });
+}
