@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import HeadText from "../Text/HeadText";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ interface JoinReqModalProps {
   _id: string;
   join_req_type: {
     req_user: string;
+    user_profile: string;
     activity_id: string;
     role: string;
     contact: string;
@@ -16,14 +17,43 @@ interface JoinReqModalProps {
   };
 }
 
+interface ReqUserData {
+  user_description: {
+    first_name: string;
+    last_name: string;
+  };
+  user_type_student: {
+    year: string;
+  };
+  user_image: string;
+}
+
 const JoinReqModal: FunctionComponent<JoinReqModalProps> = ({
   toggleModal,
   isOpen,
   join_req_type,
-  _id
+  _id,
 }) => {
   const navigate = useNavigate();
+  const [reqUser, setReqUser] = useState<ReqUserData>();
+  const [loading, setLoading] = useState<boolean>(true); // Add loading state
+
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log("Fetching user data...");
+        const reqUserData = await axios.get(`http://localhost:4000/user/${join_req_type.req_user}`);
+        setReqUser(reqUserData.data);
+        setLoading(false); // Update loading state when data is fetched
+        console.log("User data:", reqUserData.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setLoading(false); // Update loading state in case of error
+      }
+    };
+
+    fetchData(); // Call fetchData immediately
+
     // Function to disable scrolling
     const disableScroll = () => {
       document.body.style.overflow = "hidden";
@@ -40,7 +70,8 @@ const JoinReqModal: FunctionComponent<JoinReqModalProps> = ({
     return () => {
       document.body.style.overflow = "auto";
     };
-  }, [isOpen]);
+
+  }, [isOpen, join_req_type.req_user]);
 
   const handleCloseReq = async () => {
     try {
@@ -68,24 +99,24 @@ const JoinReqModal: FunctionComponent<JoinReqModalProps> = ({
   const handleAcceptReq = async () => {
     try {
       // Make an HTTP request to update the activity's recruit members
-      console.log("handle accept", join_req_type.activity_id)
+      console.log("handle accept", join_req_type.activity_id);
       const actRes = await axios.post(
         `http://localhost:4000/activity/activities/${join_req_type.activity_id}/add-recruit`,
         {
           member_id: join_req_type.req_user,
           member_status: "accepted", // Assuming you have a status for accepted members
-          recruit_role: join_req_type.role
+          recruit_role: join_req_type.role,
         }
       );
-      console.log(actRes)
+      console.log(actRes);
       const userRes = await axios.post(
         `http://localhost:4000/user/users/${join_req_type.req_user}/add-recruit`,
         {
           recruit_registered: join_req_type.role,
-          activity_id: join_req_type.activity_id
+          activity_id: join_req_type.activity_id,
         }
       );
-      console.log(userRes)
+      console.log(userRes);
       handleCloseReq();
     } catch (error) {
       console.error("Error accepting request:", error);
@@ -147,16 +178,33 @@ const JoinReqModal: FunctionComponent<JoinReqModalProps> = ({
                 {/* Modal body */}
                 <div className="mt-5 flex flex-col text-left">
                   <div className="flex flex-row w-full basis-3/6 place-content-start items-center gap-2">
-                    <div className="w-16 h-16 rounded-full overflow-hidden shadow-lg">
-                      <img
-                        className="h-full w-full object-cover"
-                        src="public/images/loginBG.jpg"
-                        alt="user image"
-                      />
+                    <div className="w-16 h-16 rounded-full overflow-hidden shadow-lg flex justify-center items-center">
+                      {reqUser?.user_image ? (
+                        <img
+                          className="h-full w-full object-cover"
+                          src={reqUser.user_image}
+                          alt="user image"
+                        />
+                      ) : (
+                        <div className="relative w-16 h-16 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+                          <svg
+                            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 text-gray-400"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                              clip-rule="evenodd"
+                            ></path>
+                          </svg>
+                        </div>
+                      )}
                     </div>
                     <div className="h-full pt-4 flex flex-col space-y-0">
-                      <p className="m-0 font-bold">{join_req_type.req_user}</p>
-                      <p className="m-0 text-sm text-cmu-purple">นักศึกษา ปี</p>
+                      <p className="m-0 font-bold">{reqUser?.user_description.first_name + " " + reqUser?.user_description.last_name}</p>
+                      <p className="m-0 text-sm text-cmu-purple">นักศึกษา ปี {reqUser?.user_type_student.year}</p>
                     </div>
                   </div>
                   <div className="basis-1/6 flex flex-row w-full">

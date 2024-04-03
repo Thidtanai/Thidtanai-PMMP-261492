@@ -21,6 +21,7 @@ const notificationSchema = new Schema({
             type: String,
             required: true
         },
+        user_profile: String,
         activity_id: String,
         role: String,
         description: String,

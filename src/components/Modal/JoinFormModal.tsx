@@ -2,6 +2,7 @@ import { FunctionComponent, useEffect, useState } from "react";
 import HeadText from "../Text/HeadText";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 interface JoinReqModalProps {
   toggleModal: () => void;
@@ -17,6 +18,7 @@ interface FormData {
   noti_receiver: string;
   join_req_type: {
     req_user: string;
+    user_profile: string;
     activity_id: string;
     role: string;
     description: string;
@@ -38,6 +40,13 @@ interface UserData {
   ];
 }
 
+interface MyToken {
+  id: string;
+  name: string;
+  group: string;
+  profile: string;
+}
+
 const JoinFormModal: FunctionComponent<JoinReqModalProps> = ({
   toggleModal,
   isOpen,
@@ -46,7 +55,13 @@ const JoinFormModal: FunctionComponent<JoinReqModalProps> = ({
   role,
   activity_owner,
 }) => {
+  const [haveToken, setHaveToken] = useState<MyToken>();
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decodedTk: MyToken = jwtDecode(token);
+      setHaveToken(decodedTk);
+    }
     // Function to disable scrolling
     const disableScroll = () => {
       document.body.style.overflow = "hidden";
@@ -71,6 +86,7 @@ const JoinFormModal: FunctionComponent<JoinReqModalProps> = ({
     noti_receiver: activity_owner,
     join_req_type: {
       req_user: user_id,
+      user_profile: "",
       activity_id: activity_id,
       role: role,
       description: "",
@@ -118,6 +134,16 @@ const JoinFormModal: FunctionComponent<JoinReqModalProps> = ({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
+      if (haveToken && haveToken.profile) {
+        // Update formData with user_profile from haveToken
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          join_req_type: {
+            ...prevFormData.join_req_type,
+            user_profile: haveToken.profile,
+          },
+        }));
+      }
       console.log(formData);
       const notiRes = await axios.post(
         "http://localhost:4000/notification/create-noti",
@@ -128,17 +154,17 @@ const JoinFormModal: FunctionComponent<JoinReqModalProps> = ({
         `http://localhost:4000/activity/activities/${activity_id}/add-member`,
         { membered_user: user_id }
       );
-  
+
       console.log("activity res: ", actRes);
       const userRes = await axios.post(
         `http://localhost:4000/user/users/${user_id}/add-activity`,
         { activity_id: activity_id }
-      )
+      );
       console.log("user res: ", userRes);
       window.location.reload();
       navigate("/activity");
     } catch (error) {
-      alert("สมัครไปแล้ว")
+      alert("สมัครไปแล้ว");
       console.log("Create norification error: ", error);
       window.location.reload();
       navigate("/activity");
@@ -227,7 +253,7 @@ const JoinFormModal: FunctionComponent<JoinReqModalProps> = ({
                         onChange={handleInputChange}
                         aria-describedby="helper-text-explanation"
                         className="bg-gray-50 border border-gray-300 text-cmu-purple text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-52 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="example@gmail.com"
+                        placeholder="Email,Line id,FB,... "
                       />
                     </div>
                     <div className="pt-4 md:p-5 flex flex-row justify-end">

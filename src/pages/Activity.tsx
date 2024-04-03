@@ -61,7 +61,6 @@ const ActivityList: React.FC = () => {
   const [userTag, setUserTag] = useState<User>();
   const [userTags, setUserTags] = useState<string[]>([]); // State for user tags
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -156,7 +155,7 @@ const ActivityList: React.FC = () => {
       <div className="flex flex-col space-y-14">
         {/* กิจกรรมทั้งหมด */}
         <HeadText text="กิจกรรมทั้งหมด" haveBg={false} />
-        <div className="flex flex-row flex-wrap gap-y-5 gap-x-14 mq450:justify-center">
+        <div className="flex flex-row flex-wrap gap-y-5 gap-x-10 mq450:justify-center">
           {activities
             .slice()
             .sort((a, b) => {
@@ -215,7 +214,7 @@ const ActivityList: React.FC = () => {
         )}
         {/* กิจกรรมผู้คนสนใจ */}
         <HeadText text="กิจกรรมที่ช่วงนี้ผู้คนสนใจ" haveBg={false} />
-        <div className="flex flex-row flex-wrap gap-y-5 gap-x-14 mq450:justify-center">
+        <div className="flex flex-row flex-wrap gap-y-5 gap-x-10 mq450:justify-center">
           {activities
             .filter(
               (activity) =>
@@ -243,71 +242,68 @@ const ActivityList: React.FC = () => {
               </div>
             ))}
         </div>
+        {/* กิจกรรมแนะนำ */}
+        {userTag && <HeadText text="กิจกรรมแนะนำ" haveBg={false} />}
         {userTag && (
-  <div className="flex flex-row flex-wrap gap-y-5 gap-x-14 mq450:justify-center">
-    {userTag && (
-  <div className="flex flex-row flex-wrap gap-y-5 gap-x-14 mq450:justify-center">
-{activities
-  .filter(activity => {
-    if (userTag && userTags.length >= 1) {
-      const commonTags = userTags.filter(tag => activity.activity_description.tag.includes(tag));
-      return commonTags.length >= 1;
-    }
-    return false;
-  })
-  .slice()
-  .sort((a, b) => {
-    const endDateA = new Date(a.activity_description.end_date);
-    const endDateB = new Date(b.activity_description.end_date);
-    const hasEndedA = hasActivityEnded(a);
-    const hasEndedB = hasActivityEnded(b);
+          <div className="flex flex-row flex-wrap gap-y-5 gap-x-10 mq450:justify-center">
+            {activities
+              .filter((activity) => {
+                if (userTag && userTags.length >= 3) {
+                  const commonTags = userTags.filter((tag) =>
+                    activity.activity_description.tag.includes(tag)
+                  );
+                  return commonTags.length >= 1;
+                }
+                return false;
+              })
+              .slice()
+              .sort((a, b) => {
+                const endDateA = new Date(a.activity_description.end_date);
+                const endDateB = new Date(b.activity_description.end_date);
+                const hasEndedA = hasActivityEnded(a);
+                const hasEndedB = hasActivityEnded(b);
 
-    if (!hasEndedA && !hasEndedB) {
-      return (
-        new Date(a.activity_description.start_date) -
-        new Date(b.activity_description.start_date)
-      );
-    }
+                if (!hasEndedA && !hasEndedB) {
+                  return (
+                    new Date(a.activity_description.start_date) -
+                    new Date(b.activity_description.start_date)
+                  );
+                }
 
-    if (!hasEndedA) {
-      return -1;
-    }
+                if (!hasEndedA) {
+                  return -1;
+                }
 
-    if (!hasEndedB) {
-      return 1;
-    }
+                if (!hasEndedB) {
+                  return 1;
+                }
 
-    return (
-      new Date(a.activity_description.start_date) -
-      new Date(b.activity_description.start_date)
-    );
-  })
-  .slice(0, activitiesToShow)
-  .map((activity) => (
-    <div
-      key={activity._id}
-      className="cursor-pointer"
-      onClick={() => handleActivityClick(activity)}
-    >
-      <ActCard
-        name={activity.activity_name}
-        tags={activity.activity_description.tag}
-        image={activity.activity_image || "image.png"}
-        member={activity.membered_user.length}
-        start_date={
-          new Date(activity.activity_description.start_date)
-        }
-        end_date={new Date(activity.activity_description.end_date)}
-      />
-    </div>
-  ))}
-
-  </div>
-)}
-
-  </div>
-)}
-
+                return (
+                  new Date(a.activity_description.start_date) -
+                  new Date(b.activity_description.start_date)
+                );
+              })
+              .slice(0, 4)
+              .map((activity) => (
+                <div
+                  key={activity._id}
+                  className="cursor-pointer"
+                  onClick={() => handleActivityClick(activity)}
+                >
+                  <ActCard
+                    name={activity.activity_name}
+                    tags={activity.activity_description.tag}
+                    image={activity.activity_image || "image.png"}
+                    member={activity.membered_user.length}
+                    start_date={
+                      new Date(activity.activity_description.start_date)
+                    }
+                    end_date={new Date(activity.activity_description.end_date)}
+                  />
+                </div>
+              ))}
+          </div>
+        )}
       </div>
     </div>
   );
