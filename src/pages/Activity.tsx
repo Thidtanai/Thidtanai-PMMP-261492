@@ -155,7 +155,7 @@ const ActivityList: React.FC = () => {
       <div className="flex flex-col space-y-14">
         {/* กิจกรรมทั้งหมด */}
         <HeadText text="กิจกรรมทั้งหมด" haveBg={false} />
-        <div className="flex flex-row flex-wrap gap-y-5 gap-x-14 mq450:justify-center">
+        <div className="flex flex-row flex-wrap gap-y-5 gap-x-10 mq450:justify-center">
           {activities
             .slice()
             .sort((a, b) => {
@@ -214,7 +214,7 @@ const ActivityList: React.FC = () => {
         )}
         {/* กิจกรรมผู้คนสนใจ */}
         <HeadText text="กิจกรรมที่ช่วงนี้ผู้คนสนใจ" haveBg={false} />
-        <div className="flex flex-row flex-wrap gap-y-5 gap-x-14 mq450:justify-center">
+        <div className="flex flex-row flex-wrap gap-y-5 gap-x-10 mq450:justify-center">
           {activities
             .filter(
               (activity) =>
@@ -245,7 +245,7 @@ const ActivityList: React.FC = () => {
         {/* กิจกรรมแนะนำ */}
         {userTag && <HeadText text="กิจกรรมแนะนำ" haveBg={false} />}
         {userTag && (
-          <div className="flex flex-row flex-wrap gap-y-5 gap-x-14 mq450:justify-center">
+          <div className="flex flex-row flex-wrap gap-y-5 gap-x-10 mq450:justify-center">
             {activities
               .filter((activity) => {
                 if (userTag && userTags.length >= 3) {

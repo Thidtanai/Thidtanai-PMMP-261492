@@ -130,7 +130,7 @@ const LogoutBtn: FunctionComponent<LogoutBtnType> = ({
       >
         {user_image ? (
           <img
-            className="w-10 h-10 rounded-full"
+            className="w-10 h-10 rounded-full object-full"
             src={user_image}
             alt="Rounded avatar"
           ></img>
